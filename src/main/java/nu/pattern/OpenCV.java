@@ -19,14 +19,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+/**
+ * modified by yangchongpan on 11.29 2017,
+ * add windows support , fix the os and arch pattern
+ * */
 public class OpenCV {
 
   private final static Logger logger = Logger.getLogger(OpenCV.class.getName());
 
   static enum OS {
-    OSX("^[Mm]ac OS X$"),
-    LINUX("^[Ll]inux$"),
-    WINDOWS("^[Ww]indows.*");
+    OSX("^[Mm][ac|AC].*"),
+    LINUX("^[Ll][inux|INUX].*"),
+    WINDOWS("^[Ww][indows|INDOWS].*");
 
     private final Set<Pattern> patterns;
 
@@ -62,8 +66,8 @@ public class OpenCV {
   }
 
   static enum Arch {
-    X86_32("i386", "i686"),
-    X86_64("amd64", "x86_64");
+    X86_32("i386", "i686", "I386", "I686"),
+    X86_64("amd64", "x86_64","X86_64","AMD64");
 
     private final Set<String> patterns;
 
@@ -315,6 +319,18 @@ public class OpenCV {
         switch (arch) {
           case X86_64:
             location = "/nu/pattern/opencv/osx/x86_64/libopencv_java249.dylib";
+            break;
+          default:
+            throw new UnsupportedPlatformException(os, arch);
+        }
+        break;
+      case WINDOWS:
+        switch (arch){
+          case X86_32:
+            location = "/nu/pattern/opencv/windows/x86_32/opencv_java249.dll";
+            break;
+          case X86_64:
+            location = "/nu/pattern/opencv/windows/x86_64/opencv_java249.dll";
             break;
           default:
             throw new UnsupportedPlatformException(os, arch);
